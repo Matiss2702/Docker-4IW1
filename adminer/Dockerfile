@@ -1,30 +1,24 @@
-FROM alpine:latest
+FROM alpine
+#update and upgrade the system
+RUN apk update && apk upgrade
+#install apache2
+RUN apk add apache2
+#install php (adminer is just a php file so we need to install php) (php-pgsql is needed for postgresql)
+RUN apk add php
+RUN apk add php-apache2 
+RUN apk add php-session
+RUN apk add php-pgsql
 
-ARG VERSION=4.7.2
+#copy the adminer file to the container
+RUN mkdir -p /var/www/localhost/htdocs/adminer
+COPY  ./adminer.php /var/www/localhost/htdocs/adminer/index.php
+#create a log folder for adminer
+RUN mkdir -p /var/log/adminer/
+#copy the adminer.conf file to the container according to the adminer.conf file
+COPY ./adminer.conf /etc/apache2/conf.d/adminer.conf
 
-RUN echo "@community https://nl.alpinelinux.org/alpine/v3.10/community" >> /etc/apk/repositories \
- && apk -U upgrade \
- && apk add -t build-dependencies \
-    ca-certificates \
-    openssl \
- && apk add \
-    su-exec \
-    tini@community \
-    php7@community \
-    php7-session@community \
-    php7-pdo_mysql@community \
-    php7-pdo_pgsql@community \
-    php7-pdo_sqlite@community \
- && cd /tmp \
- && ADMINER_FILE="adminer-${VERSION}.php" \
- && wget -q https://github.com/vrana/adminer/releases/download/v${VERSION}/${ADMINER_FILE} \
- && mkdir /adminer && mv ${ADMINER_FILE} /adminer/index.php \
- && apk del build-dependencies \
- && rm -rf /var/cache/apk/* /tmp/*
+#expose port 80 (apache uses port 80 by default)
+EXPOSE 80
 
-COPY run.sh /usr/local/bin/run.sh
-RUN chmod +x /usr/local/bin/run.sh
-
-EXPOSE 8888
-
-CMD ["/sbin/tini", "--", "run.sh"]
+#start server web
+CMD ["httpd", "-D", "FOREGROUND"]
