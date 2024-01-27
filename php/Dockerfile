@@ -10,11 +10,6 @@ RUN apk update && \
     php-openssl \
     && rm -rf /var/cache/apk/*
 
-#Installation de composer
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
-    && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
-    && php -r "unlink('composer-setup.php');"
-
 # Créer un répertoire
 WORKDIR /var/www/html
 
