@@ -4,11 +4,14 @@ FROM bloodriver/composer:v1.0
 RUN apk update && \
     apk add --no-cache php-ctype php-dom php-xml php-xmlwriter php-tokenizer php-json php-iconv php-mbstring php-openssl php-pdo php-pdo_mysql php-pdo_pgsql php-pdo_sqlite php-phar php-posix php-session php-simplexml php-xmlreader php-zip
 
-# Créer un projet Symfony dans le répertoire /var/www/html
-RUN composer create-project symfony/skeleton /var/www/html/Project-Symfony
+RUN composer require symfony/maker-bundle --dev
+
+RUN composer require symfony/orm-pack
+
+COPY . /var/www/html/Project-Symfony
 
 # Définir le répertoire de travail dans le conteneur sur le projet Symfony
-WORKDIR /var/www/html/Project-Symfony
+WORKDIR /var/www/html/project-symfony
 
 # Exposer le port sur lequel le serveur web sera accessible
 EXPOSE 8000

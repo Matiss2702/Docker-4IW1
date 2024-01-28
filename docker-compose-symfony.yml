@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  php:
+    build: 
+      context: ./php
+      dockerfile: Dockerfile
+    volumes:
+      - ./php/src:/var/www/html
+    networks:
+      - app-network
+
+  composer:
+    build: 
+      context: ./composer
+      dockerfile: Dockerfile
+    volumes:
+      - ./composer/src:/var/www/html
+    networks:
+      - app-network
+    depends_on:
+      - php
+
+  symfony:
+    build: 
+      context: ./symfony
+      dockerfile: Dockerfile
+    volumes:
+      - ./project-symfony:/var/www/html/project-symfony
+    ports:
+      - "8000:8000"
+    networks:
+      - app-network
+    depends_on:
+      - php
+
+  adminer:
+    build: 
+      context: ./adminer
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    external: true
