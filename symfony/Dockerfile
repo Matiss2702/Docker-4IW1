@@ -7,6 +7,8 @@ RUN apk update && \
 # Créer un projet Symfony dans le répertoire /var/www/html
 RUN composer create-project symfony/skeleton /var/www/html/Project-Symfony
 
+COPY . /var/www/html/Project-Symfony
+
 # Définir le répertoire de travail dans le conteneur sur le projet Symfony
 WORKDIR /var/www/html/Project-Symfony
 

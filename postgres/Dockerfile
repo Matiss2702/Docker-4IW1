@@ -1,17 +1,22 @@
-FROM alpine
+# Utiliser votre image custom PHP comme image de base
+FROM bloodriver/php:v1.0
 
-RUN apk update && apk add postgresql
+# Installer PostgreSQL
+RUN apk add --no-cache postgresql postgresql-client
 
-RUN mkdir /run/postgresql && chown postgres:postgres /run/postgresql/
-RUN mkdir -p /var/lib/postgresql/data && chown -R postgres:postgres /var/lib/postgresql/data
+# Initialiser la base de données
+RUN mkdir /run/postgresql && \
+        chown -R postgres:postgres /run/postgresql && \
+        su - postgres -c "initdb -D /var/lib/postgresql/data"
 
+# Exposer les ports pour PHP et PostgreSQL
+EXPOSE 9000 5432
 
-USER postgres
-RUN initdb -D /var/lib/postgresql/data
+# Créer un répertoire pour le code PHP
+WORKDIR /var/www/html
 
-RUN echo "host all all 0.0.0.0/0 md5" >> /var/lib/postgresql/data/pg_hba.conf
-RUN echo "listen_addresses='*'" >> /var/lib/postgresql/data/postgresql.conf
+# Copier les fichiers PHP du répertoire actuel vers le répertoire dans le conteneur
+COPY . /var/www/html
 
-EXPOSE 5432
-
-CMD ["postgres", "-D", "/var/lib/postgresql/data", "-c", "config_file=/var/lib/postgresql/data/postgresql.conf"]
+# Commande pour démarrer PHP et PostgreSQL
+CMD ["sh", "-c", "su - postgres -c 'pg_ctl start -D /var/lib/postgresql/data' && php-fpm7 -F"]
