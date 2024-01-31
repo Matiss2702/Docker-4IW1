@@ -8,13 +8,14 @@ RUN composer require symfony/maker-bundle --dev
 
 RUN composer require symfony/orm-pack
 
+# RUN composer create-project symfony/skeleton /var/www/html/Project-Symfony
 COPY . /var/www/html/Project-Symfony
 
 # Définir le répertoire de travail dans le conteneur sur le projet Symfony
-WORKDIR /var/www/html/project-symfony
+WORKDIR /var/www/html/Project-Symfony
 
 # Exposer le port sur lequel le serveur web sera accessible
 EXPOSE 8000
 
 # Commande pour démarrer le serveur web PHP intégré
-CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"]
+# CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"]

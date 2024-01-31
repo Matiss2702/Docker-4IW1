@@ -25,14 +25,17 @@ services:
     build: 
       context: ./symfony
       dockerfile: Dockerfile
+    tty: true
     volumes:
-      - ./project-symfony:/var/www/html/project-symfony
+      - ./Project-Symfony:/var/www/html/Project-Symfony
     ports:
       - "8000:8000"
     networks:
       - app-network
     depends_on:
       - php
+    command: composer create-project symfony/website-skeleton /var/www/html/Project-Symfony
+
 
   adminer:
     build: 
