@@ -2,17 +2,16 @@ version: '3.8'
 
 services:
   postgres:
-    build: 
-      context: ./postgres
-      dockerfile: Dockerfile
-    environment:
-      POSTGRES_DB: symfony
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password123
+    image: bloodriver/postgres:v1.0
+    restart: always
+    env_file:
+      - ./postgres/.env
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql@14/data:rw
     networks:
       - app-network
+    ports: # for use extension vscode
+      - "5432:5432"
 
 networks:
   app-network:

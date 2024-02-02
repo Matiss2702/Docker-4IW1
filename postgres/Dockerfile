@@ -1,22 +1,21 @@
-# Utiliser votre image custom PHP comme image de base
-FROM bloodriver/php:v1.0
+FROM alpine:3.15
 
-# Installer PostgreSQL
-RUN apk add --no-cache postgresql postgresql-client
+RUN echo "http://mirrors.aliyun.com/alpine/v3.15/community" >> /etc/apk/repositories
 
-# Initialiser la base de données
-RUN mkdir /run/postgresql && \
-        chown -R postgres:postgres /run/postgresql && \
-        su - postgres -c "initdb -D /var/lib/postgresql/data"
+# Installez PostgreSQL et les outils nécessaires
+RUN apk --no-cache add postgresql postgresql-contrib libc6-compat su-exec
 
-# Exposer les ports pour PHP et PostgreSQL
-EXPOSE 9000 5432
+# Copiez le script d'entrée
+COPY docker-entrypoint.sh /docker-entrypoint.sh
 
-# Créer un répertoire pour le code PHP
-WORKDIR /var/www/html
+# Copiez le fichier de configuration PostgreSQL
+COPY postgresql.conf /postgresql.conf
 
-# Copier les fichiers PHP du répertoire actuel vers le répertoire dans le conteneur
-COPY . /var/www/html
+# Autorisez l'exécution du script
+RUN chmod +x /docker-entrypoint.sh
 
-# Commande pour démarrer PHP et PostgreSQL
-CMD ["sh", "-c", "su - postgres -c 'pg_ctl start -D /var/lib/postgresql/data' && php-fpm7 -F"]
+# Exposez le port par défaut de PostgreSQL
+EXPOSE 5432
+
+# Définissez le script d'entrée comme point d'entrée du conteneur
+ENTRYPOINT ["/docker-entrypoint.sh"]

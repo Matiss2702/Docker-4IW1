@@ -14,6 +14,7 @@ services:
     build: 
       context: ./composer
       dockerfile: Dockerfile
+    tty: true
     volumes:
       - ./composer/src:/var/www/html
     networks:
@@ -34,8 +35,8 @@ services:
       - app-network
     depends_on:
       - php
-    command: composer create-project symfony/website-skeleton /var/www/html/Project-Symfony
-
+    command: php -S 0.0.0.0:8000 -t public
+    # command: composer create-project symfony/skeleton:"7.0.*" ./
 
   adminer:
     build: 

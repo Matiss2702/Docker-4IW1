@@ -12,6 +12,12 @@ WORKDIR /var/www/html
 # Copier les fichiers PHP du répertoire actuel vers le répertoire dans le conteneur
 COPY . /var/www/html
 
+COPY ./docker-entrypoint.sh /docker-entrypoint.sh
+
+RUN chmod +x /docker-entrypoint.sh
+
 # Exposer le port
 EXPOSE 9000
 
+# ENTRYPOINT ["/docker-entrypoint.sh"]
+# CMD ["composer"]
