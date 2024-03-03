@@ -2,18 +2,14 @@ version: '3.8'
 
 services:
   php:
-    build: 
-      context: ./php
-      dockerfile: Dockerfile
+    image: bloodriver/php:v1.0
     volumes:
       - ./php/src:/var/www/html
     networks:
       - app-network
 
   composer:
-    build: 
-      context: ./composer
-      dockerfile: Dockerfile
+    image: bloodriver/composer:v1.0
     tty: true
     volumes:
       - ./composer/src:/var/www/html
@@ -23,9 +19,7 @@ services:
       - php
 
   symfony:
-    build: 
-      context: ./symfony
-      dockerfile: Dockerfile
+    image: bloodriver/symfony:v1.0
     tty: true
     volumes:
       - ./Project-Symfony:/var/www/html/Project-Symfony
@@ -39,9 +33,7 @@ services:
     # command: composer create-project symfony/skeleton:"7.0.*" ./
 
   adminer:
-    build: 
-      context: ./adminer
-      dockerfile: Dockerfile
+    image: bloodriver/adminer:v1.0
     ports:
       - "8080:8080"
     networks:
